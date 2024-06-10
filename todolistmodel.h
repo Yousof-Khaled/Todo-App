@@ -112,7 +112,7 @@ public:
 	}
 
 	void applyAll () {
-		emit dataChanged(createIndex(0, 0), createIndex(cards.count(), 0), {rowRole, colRole});
+		emit dataChanged(createIndex(0, 0), createIndex(cards.count(), 0), {rowRole, colRole, IDRole, card_textRole});
 	}
 
 	int getMaxRowForColumn (int column) {
@@ -148,6 +148,25 @@ public:
 		if (mx != -infinity)
 			return mx;
 		return column;
+	}
+
+	int getNextID () {
+		int mx = -1;
+		for (auto & card : cards) {
+			mx = std::max (mx, card.cardID);
+		}
+		return mx + 1;
+	}
+
+	void addCard (int& selectedRow, int& selectedColumn) {
+		beginInsertRows(QModelIndex(), cards.count(), cards.count());
+		int newCol = 0, newRow = getMaxRowForColumn(0) + 1;
+		cards.push_back(ToDoItem(getNextID(), newRow, newCol, ""));
+
+		selectedRow = newRow;
+		selectedColumn= newCol;
+
+		endInsertRows();
 	}
 
 
