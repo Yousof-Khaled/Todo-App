@@ -64,8 +64,8 @@ public:
 		}
 	}
 
-	Q_INVOKABLE void updateItemPosition(int row, int col, int rowChange, int colChange) {
-		qInfo() << "trace : " << QString::asprintf("{row: %d, col: %d, rowChange: %d, colChange: %d}", row, col, rowChange, colChange);
+	Q_INVOKABLE void updateItemRow(int row, int col, int rowChange) {
+		qInfo() << "trace : " << QString::asprintf("{row: %d, col: %d, rowChange: %d, colChange: %d}", row, col, rowChange);
 		// int index = 0;
 		ToDoItem *c1 = NULL, *c2 = NULL;
 		for (auto & card : cards) {
@@ -76,17 +76,15 @@ public:
 
 		// index = 0;
 		for (auto& card : cards) {
-			if (card.rowNumber == row + rowChange && card.colNumber == col + colChange) {
+			if (card.rowNumber == row + rowChange && card.colNumber == col) {
 				c2 = &card;
 			}
 		}
 		if (c1) {
 			c1->rowNumber += rowChange;
-			c1->colNumber += colChange;
 		}
 		if (c2) {
 			c2->rowNumber -= rowChange;
-			c2->colNumber -= colChange;
 		}
 		emit dataChanged(createIndex(0, 0), createIndex(cards.count(), 0), {rowRole, colRole});
 	}

@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 
-import Todo 1.0
+// import Todo 1.0
+import ToDo_app
 
 Window {
     width: 800
@@ -25,9 +26,6 @@ Window {
         anchors.fill: parent
         focus: true
 
-        onSelectedRowChanged: {
-            isEditing = false
-        }
         onIsEditingChanged: {
             if(isEditing === false) {
                 root.forceActiveFocus()
@@ -44,28 +42,28 @@ Window {
             }
             else if (event.key === Qt.Key_Up) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, -1, 0);
+                    cardRepeater.updateItemRow(selectedRow, selectedColumn, -1);
                 }
                 selectedRow -= 1
                 // selectedRow = Math.max(selectedRow, 0)
             }
             else if (event.key === Qt.Key_Down) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, 1, 0);
+                    cardRepeater.updateItemRow(selectedRow, selectedColumn, 1);
                 }
                 selectedRow += 1
                 // selectedRow = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
             }
             else if (event.key === Qt.Key_Left) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, -1);
+                    // cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, -1);
                 }
                 selectedColumn -= 1
                 // selectedCol = Math.max(selectedRow, 0)
             }
             else if (event.key === Qt.Key_Right) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, 1);
+                    // cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, 1);
                 }
                 selectedColumn += 1
                 // selectedCol = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
@@ -132,8 +130,6 @@ Window {
                     }
                     Keys.onReturnPressed: {
                         root.isEditing = false
-                        // colNumber = 1
-                        // rowNumber = 0
                     }
                     Keys.onUpPressed: {
                         cursorPosition = 0
@@ -144,7 +140,7 @@ Window {
                 }
 
                 border {
-                    // color: "lightblue"
+                    color: "lightblue"
                     width: 3
                 }
 
@@ -201,7 +197,7 @@ Window {
 
         Repeater {
             id: cardRepeater
-            model: ToDoListModel {}
+            model: ToDoDriver.model//ToDoListModel {}
             delegate: itemComponent
 
             function printData() {
@@ -211,8 +207,8 @@ Window {
             function updateItem (index, cardID, newRow, newColumn, newText) {
                 model.updateItem(index, cardID, newRow, newColumn, newText)
             }
-            function updateItemPosition(row, col, rowChange, colChange) {
-                model.updateItemPosition(row, col, rowChange, colChange)
+            function updateItemRow(row, col, rowChange) {
+                model.updateItemRow(row, col, rowChange)
                 printData()
             }
         }
