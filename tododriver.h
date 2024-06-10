@@ -100,6 +100,10 @@ public:
 		emit selectedColumnChanged(m_selectedColumn);
 	}
 
+	Q_INVOKABLE void addNewCard () {
+		m_model->addCard(m_selectedRow, m_selectedColumn);
+	}
+
 signals:
 	void selectedRowChanged(int v);
 	void selectedColumnChanged(int v);

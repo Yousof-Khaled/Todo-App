@@ -35,6 +35,10 @@ Window {
                 isEditing = !isEditing
                 console.log("enter pressed")
             }
+            else if (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier) > 0) {
+                ToDoDriver.addNewCard()
+                isEditing = true;
+            }
             else if (event.key === Qt.Key_Escape) {
                 isEditing = false
             }
