@@ -43,18 +43,30 @@ Window {
                 isEditing = false
             }
             else if (event.key === Qt.Key_Up) {
+                if ((event.modifiers & Qt.ShiftModifier) > 0) {
+                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, -1, 0);
+                }
                 selectedRow -= 1
                 // selectedRow = Math.max(selectedRow, 0)
             }
             else if (event.key === Qt.Key_Down) {
+                if ((event.modifiers & Qt.ShiftModifier) > 0) {
+                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, 1, 0);
+                }
                 selectedRow += 1
                 // selectedRow = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
             }
             else if (event.key === Qt.Key_Left) {
+                if ((event.modifiers & Qt.ShiftModifier) > 0) {
+                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, -1);
+                }
                 selectedColumn -= 1
                 // selectedCol = Math.max(selectedRow, 0)
             }
             else if (event.key === Qt.Key_Right) {
+                if ((event.modifiers & Qt.ShiftModifier) > 0) {
+                    cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, 1);
+                }
                 selectedColumn += 1
                 // selectedCol = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
             }
@@ -76,11 +88,15 @@ Window {
                     id: anim
                     duration: 400
                 }
+                NumberAnimation {
+                    id: anim2
+                    duration: 400
+                }
                 Behavior on x {
                     animation: anim
                 }
                 Behavior on y {
-                    animation: anim
+                    animation: anim2
                 }
 
                 required property var index
@@ -101,8 +117,8 @@ Window {
                     color: "white"
                     wrapMode: TextEdit.Wrap
                     text: {
-                        console.log(rowNumber)
-                        console.log(colNumber)
+                        // console.log(rowNumber)
+                        // console.log(colNumber)
                         return card_text
                     }
 
@@ -175,13 +191,8 @@ Window {
                     from: "edit"; to: "hover";// reversible: true
                     ScriptAction {
                         script: {
-                            // itemRoot.card_text = itemText.text
-                            console.log("yousof : updated        : " + itemText.text)
-                            console.log("yousof : updated really : " + itemRoot.card_text)
-                            console.log("yousof : index" + Object.keys(index))
-                            cardRepeater.updateItem(itemRoot.cardID, itemRoot.rowNumber, itemRoot.rowNumber, itemText.text)
+                            cardRepeater.updateItem(index, itemRoot.cardID, itemRoot.rowNumber, itemRoot.colNumber, itemText.text)
                             cardRepeater.printData()
-                            // console.log(Object.keys(cardRepeater.model))
                         }
                     }
                 }
@@ -197,8 +208,12 @@ Window {
                 model.printData()
             }
 
-            function updateItem (cardID, newRow, newColumn, newText) {
-                model.updateItem(cardID, newRow, newColumn, newText)
+            function updateItem (index, cardID, newRow, newColumn, newText) {
+                model.updateItem(index, cardID, newRow, newColumn, newText)
+            }
+            function updateItemPosition(row, col, rowChange, colChange) {
+                model.updateItemPosition(row, col, rowChange, colChange)
+                printData()
             }
         }
 

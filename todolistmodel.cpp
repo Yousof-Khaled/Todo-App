@@ -29,8 +29,6 @@ QVariant ToDoListModel::data(const QModelIndex &index, int role) const
 	if (!index.isValid())
 		return QVariant();
 
-	qInfo() << "yousof : " << "(" << index.column() << ", " << index.row() << ")";
-
 	// FIXME: Implement me!
 	switch (role) {
 	case IDRole:
