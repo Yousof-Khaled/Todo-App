@@ -9,9 +9,9 @@ ToDoListModel::ToDoListModel(QObject *parent)
 	cards.append(ToDoItem(4, 3, 0, "hello(3, 0)"));
 	cards.append(ToDoItem(5, 4, 0, "hello(4, 0)"));
 	cards.append(ToDoItem(6, 0, 1, "hello(0, 1)"));
-	cards.append(ToDoItem(6, 1, 1, "hello(1, 1)"));
-	cards.append(ToDoItem(6, 2, 1, "hello(2, 1)"));
-	cards.append(ToDoItem(6, 3, 1, "hello(3, 1)"));
+	cards.append(ToDoItem(7, 1, 1, "hello(1, 1)"));
+	cards.append(ToDoItem(8, 2, 1, "hello(2, 1)"));
+	cards.append(ToDoItem(9, 0, 3, "hello(0, 3)"));
 }
 
 int ToDoListModel::rowCount(const QModelIndex &parent) const

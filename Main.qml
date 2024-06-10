@@ -5,7 +5,7 @@ import QtQuick.Controls
 import ToDo_app
 
 Window {
-    width: 800
+    width: 810
     height: 600
 
     color: "darkblue"
@@ -16,8 +16,6 @@ Window {
     Item {
         id: root
 
-        property int selectedRow: 0
-        property int selectedColumn: 0
         property bool isEditing: false
 
         property int vSeparation: 2
@@ -32,7 +30,7 @@ Window {
             }
         }
 
-        Keys.onPressed: (event) => {
+        Keys.onPressed: (event) => { // todo: cleanup
             if (event.key === Qt.Key_Return) {
                 isEditing = !isEditing
                 console.log("enter pressed")
@@ -42,31 +40,30 @@ Window {
             }
             else if (event.key === Qt.Key_Up) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    cardRepeater.updateItemRow(selectedRow, selectedColumn, -1);
+                    ToDoDriver.updateItemRow(-1);ToDoDriver.printData()
                 }
-                selectedRow -= 1
-                // selectedRow = Math.max(selectedRow, 0)
+                else
+                ToDoDriver.hoverPreviousRow()
             }
             else if (event.key === Qt.Key_Down) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    cardRepeater.updateItemRow(selectedRow, selectedColumn, 1);
+                    ToDoDriver.updateItemRow(1);ToDoDriver.printData()
                 }
-                selectedRow += 1
-                // selectedRow = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
+                ToDoDriver.hoverNextRow()
             }
             else if (event.key === Qt.Key_Left) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    // cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, -1);
+                    ToDoDriver.updateItemColumn(-1);ToDoDriver.printData()
                 }
-                selectedColumn -= 1
-                // selectedCol = Math.max(selectedRow, 0)
+                else
+                    ToDoDriver.hoverPreviousColumn()
             }
             else if (event.key === Qt.Key_Right) {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
-                    // cardRepeater.updateItemPosition(selectedRow, selectedColumn, 0, 1);
+                    ToDoDriver.updateItemColumn(1);ToDoDriver.printData()
                 }
-                selectedColumn += 1
-                // selectedCol = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
+                else
+                    ToDoDriver.hoverNextColumn()
             }
         }
 
@@ -80,6 +77,7 @@ Window {
                 height: 70
                 y: rowNumber * (height + root.vSeparation)
                 x: colNumber * (width + root.hSeparation)
+                color: "black"
 
 
                 NumberAnimation {
@@ -97,13 +95,31 @@ Window {
                     animation: anim2
                 }
 
+
+                SequentialAnimation {
+                    id: savingItem
+                    ColorAnimation {
+                        target: itemRoot
+                        property: "color"
+                        from: "black"
+                        to: "darkblue"
+                        duration: 400
+                    }
+                    ColorAnimation {
+                        target: itemRoot
+                        property: "color"
+                        from: "darkblue"
+                        to: "black"
+                        duration: 400
+                    }
+                }
+
                 required property var index
                 required property int cardID
                 required property int rowNumber
                 required property int colNumber
                 required property string card_text
 
-                color: "black"
                 TextEdit {
                     id: itemText
                     font {
@@ -115,8 +131,6 @@ Window {
                     color: "white"
                     wrapMode: TextEdit.Wrap
                     text: {
-                        // console.log(rowNumber)
-                        // console.log(colNumber)
                         return card_text
                     }
 
@@ -130,6 +144,11 @@ Window {
                     }
                     Keys.onReturnPressed: {
                         root.isEditing = false
+
+                        ToDoDriver.updateItem(index, itemRoot.cardID, itemRoot.rowNumber, itemRoot.colNumber, itemText.text)
+                        ToDoDriver.printData()
+
+                        savingItem.start()
                     }
                     Keys.onUpPressed: {
                         cursorPosition = 0
@@ -138,28 +157,24 @@ Window {
                         cursorPosition = text.length
                     }
                 }
-
                 border {
                     color: "lightblue"
                     width: 3
                 }
-
                 state: {
-                    if (rowNumber === root.selectedRow && colNumber == root.selectedColumn) {
+                    if (rowNumber === ToDoDriver.selectedRow && colNumber === ToDoDriver.selectedColumn) {
                         return root.isEditing ? "edit" : "hover"
                     }
                     else {
                          return "sleep"
                     }
                 }
-
                 onStateChanged: {
                     if(state === "edit") {
                         itemText.forceActiveFocus()
                         itemText.cursorPosition = itemText.text.length
                     }
                 }
-
                 states: [
                     State {
                         name: "sleep"
@@ -183,15 +198,6 @@ Window {
                         }
                     }
                 ]
-                transitions: Transition {
-                    from: "edit"; to: "hover";// reversible: true
-                    ScriptAction {
-                        script: {
-                            cardRepeater.updateItem(index, itemRoot.cardID, itemRoot.rowNumber, itemRoot.colNumber, itemText.text)
-                            cardRepeater.printData()
-                        }
-                    }
-                }
             }
         }
 
@@ -199,23 +205,6 @@ Window {
             id: cardRepeater
             model: ToDoDriver.model//ToDoListModel {}
             delegate: itemComponent
-
-            function printData() {
-                model.printData()
-            }
-
-            function updateItem (index, cardID, newRow, newColumn, newText) {
-                model.updateItem(index, cardID, newRow, newColumn, newText)
-            }
-            function updateItemRow(row, col, rowChange) {
-                model.updateItemRow(row, col, rowChange)
-                printData()
-            }
         }
-
-
     }
-
-
-
 }
