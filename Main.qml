@@ -42,7 +42,6 @@ Window {
                 if ((event.modifiers & Qt.ShiftModifier) > 0) {
                     ToDoDriver.updateItemRow(-1);ToDoDriver.printData()
                 }
-                else
                 ToDoDriver.hoverPreviousRow()
             }
             else if (event.key === Qt.Key_Down) {
