@@ -34,7 +34,7 @@ QVariant ToDoListModel::data(const QModelIndex &index, int role) const
 	// FIXME: Implement me!
 	switch (role) {
 	case IDRole:
-		return QVariant(cards[index.row()].ID);
+		return QVariant(cards[index.row()].cardID);
 	case rowRole:
 		return QVariant(cards[index.row()].rowNumber);
 	case colRole:
@@ -69,7 +69,7 @@ QHash<int, QByteArray> ToDoListModel::roleNames() const
 {
 	QHash<int, QByteArray> names;
 
-	names[IDRole] = "ID";
+	names[IDRole] = "cardID";
 	names[rowRole] = "rowNumber";
 	names[colRole] = "colNumber";
 	names[card_textRole] = "card_text";

@@ -83,6 +83,8 @@ Window {
                     animation: anim
                 }
 
+                required property var index
+                required property int cardID
                 required property int rowNumber
                 required property int colNumber
                 required property string card_text
@@ -169,6 +171,20 @@ Window {
                         }
                     }
                 ]
+                transitions: Transition {
+                    from: "edit"; to: "hover";// reversible: true
+                    ScriptAction {
+                        script: {
+                            // itemRoot.card_text = itemText.text
+                            console.log("yousof : updated        : " + itemText.text)
+                            console.log("yousof : updated really : " + itemRoot.card_text)
+                            console.log("yousof : index" + Object.keys(index))
+                            cardRepeater.updateItem(itemRoot.cardID, itemRoot.rowNumber, itemRoot.rowNumber, itemText.text)
+                            cardRepeater.printData()
+                            // console.log(Object.keys(cardRepeater.model))
+                        }
+                    }
+                }
             }
         }
 
@@ -176,6 +192,14 @@ Window {
             id: cardRepeater
             model: ToDoListModel {}
             delegate: itemComponent
+
+            function printData() {
+                model.printData()
+            }
+
+            function updateItem (cardID, newRow, newColumn, newText) {
+                model.updateItem(cardID, newRow, newColumn, newText)
+            }
         }
 
 
