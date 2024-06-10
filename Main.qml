@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 
+import Todo 1.0
+
 Window {
     width: 800
     height: 600
@@ -10,14 +12,15 @@ Window {
     visible: true
     title: qsTr("Hello World")
 
-    property int vSeparation: 2
-
     Item {
         id: root
 
-        property int selectedRow: 1
+        property int selectedRow: 0
         property int selectedColumn: 0
         property bool isEditing: false
+
+        property int vSeparation: 2
+        property int hSeparation: 2
 
         anchors.fill: parent
         focus: true
@@ -41,11 +44,19 @@ Window {
             }
             else if (event.key === Qt.Key_Up) {
                 selectedRow -= 1
-                selectedRow = Math.max(selectedRow, 0)
+                // selectedRow = Math.max(selectedRow, 0)
             }
             else if (event.key === Qt.Key_Down) {
                 selectedRow += 1
-                selectedRow = Math.min (selectedRow, myModel.count - 1)
+                // selectedRow = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
+            }
+            else if (event.key === Qt.Key_Left) {
+                selectedColumn -= 1
+                // selectedCol = Math.max(selectedRow, 0)
+            }
+            else if (event.key === Qt.Key_Right) {
+                selectedColumn += 1
+                // selectedCol = Math.min (selectedRow, cardRepeater.model.rowCount() - 1)
             }
         }
 
@@ -57,10 +68,23 @@ Window {
 
                 width: 200
                 height: 70
-                y: row * (height + vSeparation)
+                y: rowNumber * (height + root.vSeparation)
+                x: colNumber * (width + root.hSeparation)
 
-                required property int row
-                required property int col
+
+                NumberAnimation {
+                    id: anim
+                    duration: 400
+                }
+                Behavior on x {
+                    animation: anim
+                }
+                Behavior on y {
+                    animation: anim
+                }
+
+                required property int rowNumber
+                required property int colNumber
                 required property string card_text
 
                 color: "black"
@@ -75,7 +99,8 @@ Window {
                     color: "white"
                     wrapMode: TextEdit.Wrap
                     text: {
-                        console.log(row)
+                        console.log(rowNumber)
+                        console.log(colNumber)
                         return card_text
                     }
 
@@ -89,6 +114,8 @@ Window {
                     }
                     Keys.onReturnPressed: {
                         root.isEditing = false
+                        // colNumber = 1
+                        // rowNumber = 0
                     }
                     Keys.onUpPressed: {
                         cursorPosition = 0
@@ -104,7 +131,7 @@ Window {
                 }
 
                 state: {
-                    if (row === root.selectedRow) {
+                    if (rowNumber === root.selectedRow && colNumber == root.selectedColumn) {
                         return root.isEditing ? "edit" : "hover"
                     }
                     else {
@@ -145,27 +172,9 @@ Window {
             }
         }
 
-        ListModel {
-            id: myModel
-            ListElement {
-                row: 0
-                col: 0
-                card_text: "hello1"
-            }
-            ListElement {
-                row: 1
-                col: 0
-                card_text: "hello2"
-            }
-            ListElement {
-                row: 2
-                col: 0
-                card_text: "hello3"
-            }
-        }
-
         Repeater {
-            model: myModel
+            id: cardRepeater
+            model: ToDoListModel {}
             delegate: itemComponent
         }
 
