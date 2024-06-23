@@ -10,7 +10,7 @@ Window {
     color: "#383838"
 
     visible: true
-    title: qsTr("Hello World")
+    title: qsTr("ToDo App")
 
     Item {
         id: root
