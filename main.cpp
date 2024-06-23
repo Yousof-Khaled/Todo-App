@@ -1,13 +1,13 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include "todolistmodel.h"
+// #include "todolistmodel.h"
 
 int main(int argc, char *argv[])
 {
 	QGuiApplication app(argc, argv);
 
-	qmlRegisterType<ToDoListModel>("Todo", 1, 0, "ToDoListModel");
+	// qmlRegisterType<ToDoListModel>("Todo", 1, 0, "ToDoListModel");
 
 	QQmlApplicationEngine engine;
 	const QUrl url(QStringLiteral("qrc:/ToDo_app/Main.qml"));

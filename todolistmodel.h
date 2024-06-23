@@ -2,6 +2,8 @@
 #define TODOLISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QFile>
+#include <QTextStream>
 
 struct ToDoItem {
 	int cardID, rowNumber, colNumber;
@@ -24,6 +26,7 @@ class ToDoListModel : public QAbstractListModel
 
 public:
 	explicit ToDoListModel(QObject *parent = nullptr);
+	~ToDoListModel();
 
 	enum {
 		IDRole = Qt::UserRole,
@@ -233,11 +236,50 @@ public:
 		applyAll();
 	}
 
+	void readFromFile() {
+		qInfo() << "reading from file";
+
+		QFile file (path);
+		QTextStream in(&file);
+
+		if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+			qWarning() << "IO ERROR";
+			return;
+		}
+
+		while (!in.atEnd()) {
+			int id, row, col;
+			QString text;
+
+			in >> id >> row >> col;
+			text = in.readLine().trimmed();
+			cards.emplaceBack(id, row, col, text);
+		}
+	}
+
+	void writeToFile() {
+		qInfo() << "writing to file";
+
+		QFile file (path);
+		QTextStream out(&file);
+
+		if (!file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
+			qWarning() << "IO ERROR";
+			return;
+		}
+
+		for (auto& c : cards) {
+			out << c.cardID << " " << c.rowNumber << " " << c.colNumber <<  " " << c.card_text << "\n";
+		}
+	}
+
 
 private:
 	virtual QHash<int, QByteArray> roleNames() const override;
 
 	QVector<ToDoItem> cards = {};
+
+	const QString path = "C:/Users/Youssef Khaled/Desktop/todoApp_data.txt";
 
 };
 
