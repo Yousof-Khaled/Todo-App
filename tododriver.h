@@ -20,6 +20,7 @@ class ToDoDriver : public QObject
 
 public:
 	explicit ToDoDriver(QObject *parent = nullptr);
+	~ToDoDriver();
 
 	static int maxColumns;
 

@@ -3,15 +3,22 @@
 ToDoListModel::ToDoListModel(QObject *parent)
 	: QAbstractListModel(parent)
 {
-	cards.append(ToDoItem(1, 0, 0, "hello(0, 0)"));
-	cards.append(ToDoItem(2, 1, 0, "hello(1, 0)"));
-	cards.append(ToDoItem(3, 2, 0, "hello(2, 0)"));
-	cards.append(ToDoItem(4, 3, 0, "hello(3, 0)"));
-	cards.append(ToDoItem(5, 4, 0, "hello(4, 0)"));
-	cards.append(ToDoItem(6, 0, 1, "hello(0, 1)"));
-	cards.append(ToDoItem(7, 1, 1, "hello(1, 1)"));
-	cards.append(ToDoItem(8, 2, 1, "hello(2, 1)"));
-	cards.append(ToDoItem(9, 0, 3, "hello(0, 3)"));
+	// cards.append(ToDoItem(1, 0, 0, "hello(0, 0)"));
+	// cards.append(ToDoItem(2, 1, 0, "hello(1, 0)"));
+	// cards.append(ToDoItem(3, 2, 0, "hello(2, 0)"));
+	// cards.append(ToDoItem(4, 3, 0, "hello(3, 0)"));
+	// cards.append(ToDoItem(5, 4, 0, "hello(4, 0)"));
+	// cards.append(ToDoItem(6, 0, 1, "hello(0, 1)"));
+	// cards.append(ToDoItem(7, 1, 1, "hello(1, 1)"));
+	// cards.append(ToDoItem(8, 2, 1, "hello(2, 1)"));
+	// cards.append(ToDoItem(9, 0, 3, "hello(0, 3)"));
+
+	readFromFile();
+}
+
+ToDoListModel::~ToDoListModel()
+{
+	writeToFile();
 }
 
 int ToDoListModel::rowCount(const QModelIndex &parent) const
