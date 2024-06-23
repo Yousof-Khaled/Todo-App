@@ -1,14 +1,13 @@
 import QtQuick
 import QtQuick.Controls
 
-// import Todo 1.0
 import ToDo_app
 
 Window {
     width: 810
     height: 600
 
-    color: "darkblue"
+    color: "#383838"
 
     visible: true
     title: qsTr("Hello World")
@@ -93,7 +92,13 @@ Window {
 
                 width: 200
                 height: 70
-                y: rowNumber * (height + root.vSeparation)
+                y: {
+                    var ret = (rowNumber + 1) * (height + root.vSeparation)
+                    if (rowNumber > -1)
+                        ret -= 20
+                    return ret
+                }
+
                 x: colNumber * (width + root.hSeparation)
                 color: "black"
 
@@ -205,6 +210,10 @@ Window {
                     width: 3
                 }
                 state: {
+                    if (rowNumber === -1) {
+                        return "header"
+                    }
+
                     if (rowNumber === ToDoDriver.selectedRow && colNumber === ToDoDriver.selectedColumn) {
                         if (root.isEditing)
                             return "edit";
@@ -235,7 +244,7 @@ Window {
                         name: "hover"
                         PropertyChanges {
                             target: itemRoot
-                            border.color: "darkgrey"
+                            border.color: "blue"
                         }
                     },
                     State {
@@ -244,6 +253,15 @@ Window {
                             target: itemRoot
                             border.color: "lightblue"
                         }
+                    },
+                    State {
+                        name: "header"
+                        PropertyChanges {
+                            target: itemRoot
+                            border.color: "orange"
+                            color: "orange"
+                            height: 50
+                        }
                     }
 
                 ]
@@ -251,8 +269,26 @@ Window {
         }
 
         Repeater {
+            id: header
+
+            model : ListModel {
+                ListElement{
+                    cardID: -1
+                    rowNumber: -1
+                    colNumber: 0
+                    card_text: "Ready"
+                }
+                ListElement{cardID: -2; rowNumber: -1; colNumber: 1; card_text: "In Progress"}
+                ListElement{cardID: -3; rowNumber: -1; colNumber: 2; card_text: "Testing"}
+                ListElement{cardID: -4; rowNumber: -1; colNumber: 3; card_text: "Done"}
+            }
+
+            delegate: itemComponent
+        }
+
+        Repeater {
             id: cardRepeater
-            model: ToDoDriver.model//ToDoListModel {}
+            model: ToDoDriver.model
             delegate: itemComponent
         }
     }
