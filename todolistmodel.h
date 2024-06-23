@@ -169,6 +169,70 @@ public:
 		endInsertRows();
 	}
 
+	void deleteCard (int& selectedRow, int& selectedColumn) {
+
+		int oldCol = selectedColumn, oldRow = selectedRow;
+
+		int toBeDeletedID = -1;
+		for (int i = 0 ; i < cards.count() ; ++i) {
+			if (cards[i].colNumber == selectedColumn) {
+				if (cards[i].rowNumber == selectedRow) {
+					toBeDeletedID = i;
+				}
+			}
+		}
+		if (toBeDeletedID == -1){
+			return;
+		}
+
+		beginRemoveRows(QModelIndex(), toBeDeletedID, toBeDeletedID);
+		cards.removeAt(toBeDeletedID);
+		endRemoveRows();
+
+		for (int i = 0 ; i < cards.count() ; ++i) {
+			if (cards[i].colNumber == oldCol && cards[i].rowNumber > oldRow) {
+				cards[i].rowNumber -= 1; // go up
+			}
+		}
+
+		auto hasColumnLikeSelected = [this, selectedColumn] () -> bool {
+			for (int i = 0 ; i < cards.count() ; ++i) {
+				if (cards[i].colNumber == selectedColumn)
+					return true;
+			}
+			return false;
+		};
+		auto hasRowInSelectedColumn = [this, selectedColumn] (int row) -> bool {
+			for (auto& card : cards) {
+				if (card.colNumber == selectedColumn && card.rowNumber == row)
+					return true;
+			}
+			return false;
+		};
+
+		/*
+		 * if column not empty
+		 *		if col and row - 1 exist -> select it
+		 *		else select col, row + 1
+		 *
+		 */
+		if (hasColumnLikeSelected())
+		{
+			selectedRow = hasRowInSelectedColumn(selectedRow) ? selectedRow : selectedRow - 1;
+		}
+		else {
+			if (getPreviousOccupiedColumn(selectedColumn) != selectedColumn) {
+				selectedColumn = getPreviousOccupiedColumn(selectedColumn);
+			}
+			else if (getNextOccupiedColumn(selectedColumn) != selectedColumn) {
+				selectedColumn = getNextOccupiedColumn(selectedColumn);
+			}
+			selectedRow = 0;//std::min (getMaxRowForColumn(selectedColumn), selectedRow);
+		}
+
+		applyAll();
+	}
+
 
 private:
 	virtual QHash<int, QByteArray> roleNames() const override;
