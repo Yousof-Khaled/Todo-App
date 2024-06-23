@@ -4,7 +4,8 @@ ToDoDriver::ToDoDriver(QObject *parent)
 	: QObject{parent}
 {
 	m_model = new ToDoListModel();
-	m_selectedRow = m_selectedColumn = 0;
+	m_selectedRow = 0;
+	m_selectedColumn = m_model->getNextOccupiedColumn(-1);
 }
 
 ToDoDriver::~ToDoDriver()
