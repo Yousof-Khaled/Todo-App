@@ -279,7 +279,7 @@ private:
 
 	QVector<ToDoItem> cards = {};
 
-	const QString path = "C:/Users/Youssef Khaled/Desktop/todoApp_data.txt";
+	const QString path = "";
 
 };
 
