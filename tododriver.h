@@ -104,6 +104,13 @@ public:
 		m_model->addCard(m_selectedRow, m_selectedColumn);
 	}
 
+	Q_INVOKABLE void deleteSelectedCard() {
+		m_model->deleteCard(m_selectedRow, m_selectedColumn);
+
+		emit selectedRowChanged(m_selectedRow);
+		emit selectedColumnChanged(m_selectedColumn);
+	}
+
 signals:
 	void selectedRowChanged(int v);
 	void selectedColumnChanged(int v);

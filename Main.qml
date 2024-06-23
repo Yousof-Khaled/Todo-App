@@ -17,6 +17,7 @@ Window {
         id: root
 
         property bool isEditing: false
+        property bool isDeleting: false
 
         property int vSeparation: 2
         property int hSeparation: 2
@@ -29,11 +30,21 @@ Window {
                 root.forceActiveFocus()
             }
         }
+        onIsDeletingChanged: {
+            if(isDeleting === false) {
+                root.forceActiveFocus()
+            }
+        }
 
-        Keys.onPressed: (event) => { // todo: cleanup
+        Keys.onPressed: (event) => { // todo: cleanup -> remove key events handling to the c++ side
+            if (isDeleting) {
+                return
+            }
+
             if (event.key === Qt.Key_Return) {
                 isEditing = !isEditing
                 console.log("enter pressed")
+                console.log("row : " + ToDoDriver.selectedRow + ", column : " + ToDoDriver.selectedColumn)
             }
             else if (event.key === Qt.Key_N && (event.modifiers & Qt.ControlModifier) > 0) {
                 ToDoDriver.addNewCard()
@@ -68,6 +79,10 @@ Window {
                 else
                     ToDoDriver.hoverNextColumn()
             }
+            else if (event.key === Qt.Key_Delete) {
+                root.isDeleting = true
+                console.log("delete is pressed")
+            }
         }
 
 
@@ -82,22 +97,16 @@ Window {
                 x: colNumber * (width + root.hSeparation)
                 color: "black"
 
-
-                NumberAnimation {
-                    id: anim
-                    duration: 400
-                }
-                NumberAnimation {
-                    id: anim2
-                    duration: 400
-                }
                 Behavior on x {
-                    animation: anim
+                    animation: NumberAnimation {
+                        duration: 200
+                    }
                 }
                 Behavior on y {
-                    animation: anim2
+                    animation: NumberAnimation {
+                        duration: 200
+                    }
                 }
-
 
                 SequentialAnimation {
                     id: savingItem
@@ -114,6 +123,37 @@ Window {
                         from: "darkblue"
                         to: "black"
                         duration: 400
+                    }
+                }
+                ParallelAnimation {
+                id: deletingItem
+                    ColorAnimation {
+                        target: itemRoot
+                        property: "color"
+                        from: "black"
+                        to: "red"
+                        duration: 400
+                    }
+                    NumberAnimation {
+                        target: itemRoot
+                        property: "opacity"
+                        from: 1
+                        to: 0
+                        duration: 600
+                    }
+                    running: {
+                        return root.isDeleting == true && (rowNumber === ToDoDriver.selectedRow && colNumber === ToDoDriver.selectedColumn)
+                    }
+
+                    onRunningChanged: {
+                        if (running == true) {
+                            // root.activeFocus = false
+                            // itemRoot.forceActiveFocus()
+                        }
+                        else if (running == false) {
+                            root.isDeleting = false
+                            ToDoDriver.deleteSelectedCard()
+                        }
                     }
                 }
 
@@ -161,12 +201,17 @@ Window {
                     }
                 }
                 border {
-                    color: "lightblue"
+                    // color: "lightblue"
                     width: 3
                 }
                 state: {
                     if (rowNumber === ToDoDriver.selectedRow && colNumber === ToDoDriver.selectedColumn) {
-                        return root.isEditing ? "edit" : "hover"
+                        if (root.isEditing)
+                            return "edit";
+                        else if (root.isDeleting)
+                            return "delete"
+                        else
+                            return "hover";
                     }
                     else {
                          return "sleep"
@@ -200,6 +245,7 @@ Window {
                             border.color: "lightblue"
                         }
                     }
+
                 ]
             }
         }
