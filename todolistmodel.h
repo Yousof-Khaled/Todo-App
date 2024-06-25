@@ -274,7 +274,7 @@ public:
 	}
 
 	QString getFilePath () {
-		qFatal("todolistmodel::getFilePath Not implemented yet");
+		qFatal("todolistmodel::getFilePath Not implemented yet\nFor now you can add your hardcoded filepath");
 		return "";
 	}
 
