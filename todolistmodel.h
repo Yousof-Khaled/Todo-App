@@ -273,13 +273,18 @@ public:
 		}
 	}
 
+	QString getFilePath () {
+		qFatal("todolistmodel::getFilePath Not implemented yet");
+		return "";
+	}
+
 
 private:
 	virtual QHash<int, QByteArray> roleNames() const override;
 
 	QVector<ToDoItem> cards = {};
 
-	const QString path = "";
+	const QString path = getFilePath();
 
 };
 
