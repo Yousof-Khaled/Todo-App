@@ -1,11 +1,12 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 
 import ToDo_app
 
 Window {
     width: 810
-    height: 600
+    height: 700
 
     color: "#383838"
 
@@ -290,6 +291,77 @@ Window {
             id: cardRepeater
             model: ToDoDriver.model
             delegate: itemComponent
+        }
+
+        Rectangle {
+            id: instructions
+
+            anchors {
+                left: root.left
+                right: root.right
+                bottom: root.bottom
+            }
+
+            height: 100
+
+            color: "black"
+
+            GridLayout {
+                id: grid
+                width: parent.width
+
+                property int maxColumns: 3
+
+                Repeater {
+                    model: ListModel {
+                        ListElement {
+                            doWhat: "Traverse Board"
+                            how: "Arrow Keys"
+                        }
+                        ListElement {
+                            doWhat: "Move Card"
+                            how: "Shift + Arrow Keys"
+                        }
+                        ListElement {
+                            doWhat: "Edit Card"
+                            how: "Enter"
+                        }
+                        ListElement {
+                            doWhat: "Save Edit"
+                            how: "Enter"
+                        }
+                        ListElement {
+                            doWhat: "Add card"
+                            how: "Ctrl + N"
+                        }
+                        ListElement {
+                            doWhat: "Delete card"
+                            how: "delete Key"
+                        }
+                    }
+
+                    delegate: Item {
+                        required property int index
+                        required property string doWhat
+                        required property string how
+
+                        Layout.row: index / grid.maxColumns
+                        Layout.column: index % grid.maxColumns
+                        Layout.preferredHeight: 20
+                        Layout.preferredWidth: grid.width / grid.maxColumns
+
+                        Label {
+                            color: "white"
+                            text: parent.doWhat + ": " + parent.how
+                            font {
+                                pixelSize: 14
+                                bold: true
+                            }
+                            anchors.centerIn: parent
+                        }
+                    }
+                }
+            }
         }
     }
 }
